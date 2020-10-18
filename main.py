@@ -2,11 +2,10 @@ import requests
 import csv
 import io
 import datetime
-#import psycopg2
 import json
 
-
-'''
+"""
+#import psycopg2
 def connect():
     config = json.load(open('config.json'))
 
@@ -17,20 +16,6 @@ def connect():
         ,host     = config['host']
         ,port     = config['port']
     )
-'''
-
-
-def downloadSheetAsCsv():
-    sheet_id = '1_BkMcHbeAGuMVearIuEiICOV6ae6VJUQ0QYOv9uCM9A'
-    url = f'https://docs.google.com/spreadsheets/d/{sheet_id}/export?format=csv&id={sheet_id}&gid=0'
-
-    req = requests.get(url)
-    req.encoding = 'utf-8'
-
-    return req.text
-
-
-"""
 def updateEvent(connection, date, description):
     cur = connection.cursor()
     cur.execute('''
@@ -43,8 +28,18 @@ def updateEvent(connection, date, description):
 """
 
 
-if __name__ == '__main__':
-    #connection = connect()
+def downloadSheetAsCsv():
+    sheet_id = '1_BkMcHbeAGuMVearIuEiICOV6ae6VJUQ0QYOv9uCM9A'
+    url = f'https://docs.google.com/spreadsheets/d/{sheet_id}/export?format=csv&id={sheet_id}&gid=0'
+
+    req = requests.get(url)
+    req.encoding = 'utf-8'
+
+    return req.text
+
+
+def application(env, start_response):
+    start_response('200 OK', [('Content-Type','text/html')])
 
     csv_str = downloadSheetAsCsv()
     data = csv.reader(io.StringIO(csv_str), delimiter=',')
@@ -70,3 +65,5 @@ if __name__ == '__main__':
 
     with open('index.html', 'w') as f:
         f.write(html_template.replace('{{EVENTS}}', html_segment))
+
+    return [b"Done"]
