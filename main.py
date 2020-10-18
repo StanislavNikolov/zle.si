@@ -2,10 +2,11 @@ import requests
 import csv
 import io
 import datetime
-import psycopg2
+#import psycopg2
 import json
 
 
+'''
 def connect():
     config = json.load(open('config.json'))
 
@@ -16,6 +17,7 @@ def connect():
         ,host     = config['host']
         ,port     = config['port']
     )
+'''
 
 
 def downloadSheetAsCsv():
@@ -28,6 +30,7 @@ def downloadSheetAsCsv():
     return req.text
 
 
+"""
 def updateEvent(connection, date, description):
     cur = connection.cursor()
     cur.execute('''
@@ -37,18 +40,33 @@ def updateEvent(connection, date, description):
           SET description = excluded.description;
     ''', (date, description))
     connection.commit()
+"""
 
 
 if __name__ == '__main__':
-    connection = connect()
+    #connection = connect()
 
     csv_str = downloadSheetAsCsv()
     data = csv.reader(io.StringIO(csv_str), delimiter=',')
     data.__next__() # skip first row
 
+    today = datetime.datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+
+    html_segment = ''
     for row in data:
         dateStr = row[0]
         date = datetime.datetime.strptime(dateStr, '%Y-%m-%d')
         descr = row[1]
 
-        updateEvent(connection, date, descr)
+        if len(descr) == 0: continue
+        if date < today: continue
+
+        dateFmt = datetime.datetime.strftime(date, '%Y-%m-%d')
+        html_segment += f'<tr><td>{dateFmt}</td><td>{descr}</td></tr>'
+        #updateEvent(connection, date, descr)
+
+    with open('index_template.html') as f:
+        html_template = f.read()
+
+    with open('index.html', 'w') as f:
+        f.write(html_template.replace('{{EVENTS}}', html_segment))

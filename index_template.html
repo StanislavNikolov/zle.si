@@ -1,0 +1,49 @@
+<html>
+<head>
+	<meta charset="utf-8"/>
+	<title>zle.si</title>
+
+<style>
+	body {
+		font-family: sans-serif;
+	}
+
+	.styled-table {
+		border-collapse: collapse;
+		width: 100%;
+	}
+
+	.styled-table thead tr {
+		background-color: #009678;
+		color: white;
+		text-align: left;
+		font-weight: bold;
+	}
+
+	.styled-table th, .styled-table td {
+		padding: 0.4rem;
+	}
+
+	.styled-table tbody tr {
+		border-bottom: 1px solid gray;
+	}
+</style>
+
+</head>
+<body>
+	<h2> Upcoming events:</h2>
+
+	<table class="styled-table">
+		<thead>
+			<tr>
+				<th>Date</th>
+				<th>Event</th>
+			</tr>
+		</thead>
+		<tbody>
+			{{EVENTS}}
+		</tbody>
+	</table>
+
+</body>
+</html>
